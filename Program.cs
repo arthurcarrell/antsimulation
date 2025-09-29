@@ -5,7 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace AntSimCS
 {
@@ -42,7 +44,8 @@ namespace AntSimCS
                 switch (Choice)
                 {
                     case "1":
-                        Console.WriteLine(ThisSimulation.GetDetails());
+                        ThisSimulation.DisplayGrid();
+                        ThisSimulation.GetDetails();
                         break;
                     case "2":
                         int StartRow = 0, StartColumn = 0, EndRow = 0, EndColumn = 0;
@@ -312,6 +315,36 @@ namespace AntSimCS
                     }
                 }
                 return Details;
+            }
+
+            public void DisplayGrid()
+            {
+                for (int r=1; r <= NumberOfRows; r++)
+                {
+                    for (int c=1; c <= NumberOfColumns; c++) {
+                        // get the details of this cell.
+                        Cell cell = Grid[GetIndex(r,c)];
+                        
+                        bool hasNest = GetNestInCell(cell) != null;
+                        int antAmount = GetNumberOfAntsInCell(cell);
+                        int pheromoneAmount = GetNumberOfPheromonesInCell(cell);
+                        int foodAmount = cell.GetAmountOfFood();
+
+                        string printText = " ";
+                        Console.ResetColor();
+
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                        if (hasNest) Console.BackgroundColor = ConsoleColor.DarkYellow;
+                        if (antAmount>0) Console.ForegroundColor = ConsoleColor.Red;
+                        if (antAmount>0) printText = "A";
+                        if (pheromoneAmount>0) Console.ForegroundColor = ConsoleColor.Magenta;
+                        if (foodAmount>0) Console.BackgroundColor = ConsoleColor.DarkGreen;
+
+                        Console.Write(printText);
+                    }
+                    Console.Write("\n");
+                }
+                Console.ResetColor();
             }
 
             public string GetAreaDetails(int StartRow, int StartColumn, int EndRow, int EndColumn)
